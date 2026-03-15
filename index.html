@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE ESCHATON SEQUENCE — sinaida.eu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d0d0f;
+    --bg2:       #111114;
+    --red:       #ff3a2d;
+    --cyan:      #00d4d4;
+    --white:     #f0f0f0;
+    --grey:      #8a8a9a;
+    --dim:       #2a2a3a;
+    --grid-line: rgba(255,255,255,0.04);
+    --red-glow:  rgba(255,58,45,0.2);
+    --cyan-glow: rgba(0,212,212,0.2);
+    --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+    --font-body: 'Courier Prime', monospace;
+    --font-head: 'Rajdhani', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #particles {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  #progress {
+    position: fixed; top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), var(--cyan));
+    width: 0%;
+    z-index: 9999;
+    box-shadow: 0 0 8px var(--cyan);
+    transition: width 0.1s linear;
+  }
+
+  /* NAVBAR */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(13,13,15,0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--dim);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-logo svg { width: 64px; height: 22px; }
+
+  .nav-tag {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+
+  /* LAYOUT */
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 clamp(1.2rem, 4vw, 3rem);
+  }
+
+  section {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+    border-bottom: 1px solid var(--dim);
+  }
+
+  /* TERMINAL LABEL */
+  .term {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyan);
+    letter-spacing: 0.04em;
+    margin-bottom: 2rem;
+  }
+  .term::before { content: '> '; color: var(--red); }
+  .term .muted { color: var(--grey); }
+
+  /* HEADINGS */
+  h1 {
+    font-family: var(--font-head);
+    font-size: clamp(3.2rem, 10vw, 7.5rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.8rem;
+  }
+  h1 .w { color: var(--white); display: block; }
+  h1 .r { color: var(--red);   display: block; text-shadow: 0 0 30px var(--red-glow); }
+  h1 .c { color: var(--cyan);  display: block; text-shadow: 0 0 30px var(--cyan-glow); }
+
+  h2 {
+    font-family: var(--font-head);
+    font-size: clamp(1.9rem, 5vw, 3.4rem);
+    font-weight: 300;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+  h2 em  { color: var(--red);  font-style: normal; }
+  h2 .c  { color: var(--cyan); text-shadow: 0 0 16px var(--cyan-glow); }
+
+  p {
+    font-family: var(--font-body);
+    color: rgba(240,240,240,0.78);
+    font-size: 0.95rem;
+    line-height: 1.9;
+    margin-bottom: 1.2em;
+  }
+  p:last-child { margin-bottom: 0; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 6rem;
+    border-bottom: 1px solid var(--dim);
+  }
+
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.3s;
+  }
+
+  .hero h1 { opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s; }
+
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: 0.93rem;
+    color: var(--grey);
+    max-width: 540px;
+    line-height: 1.85;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.9s;
+  }
+
+  .hero-pills {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin-top: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.1s;
+  }
+
+  .pill {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid var(--dim);
+    color: var(--grey);
+    padding: 0.32rem 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+    cursor: default;
+  }
+  .pill:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .scroll-hint {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.28em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 4rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.4s;
+  }
+
+  /* CURSOR */
+  .cursor {
+    display: inline-block;
+    width: 0.55em; height: 1em;
+    background: var(--cyan);
+    margin-left: 3px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--dim);
+    margin: 3.5rem 0 0;
+  }
+  .stat {
+    padding: 2rem 1.5rem;
+    border-right: 1px solid var(--dim);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    font-weight: 700;
+    color: var(--red);
+    display: block;
+    line-height: 1;
+    text-shadow: 0 0 24px var(--red-glow);
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+  @media (max-width:580px) {
+    .stats { grid-template-columns: 1fr; }
+    .stat  { border-right: none; border-bottom: 1px solid var(--dim); }
+    .stat:last-child { border-bottom: none; }
+  }
+
+  /* PULL QUOTE */
+  .pull-quote {
+    font-family: var(--font-head);
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    font-weight: 300;
+    color: var(--white);
+    border-left: 2px solid var(--cyan);
+    padding: 1.2rem 0 1.2rem 2rem;
+    margin: 2.5rem 0;
+    line-height: 1.45;
+    background: rgba(0,212,212,0.04);
+    box-shadow: inset 3px 0 20px rgba(0,212,212,0.05);
+  }
+
+  /* ECG SVG */
+  .ecg-svg { width: 100%; height: 36px; margin: 2rem 0 2.5rem; opacity: 0.55; }
+  .ecg-path {
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: ecgDraw 2.2s ease forwards 0.5s;
+  }
+
+  /* TWO COL */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+  @media (max-width:640px) { .two-col { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+  /* PROCESS GRID */
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    border: 1px solid var(--dim);
+    margin-top: 2.5rem;
+  }
+  .process-step {
+    padding: 2rem 1.5rem;
+    border-right: 1px solid var(--dim);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.25s;
+  }
+  .process-step::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+  }
+  .process-step:hover { background: rgba(255,58,45,0.04); }
+  .process-step:hover::after { transform: scaleX(1); }
+  .process-step:last-child { border-right: none; }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.18em;
+    color: var(--red);
+    margin-bottom: 0.9rem;
+    display: block;
+  }
+  .process-step h4 {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.7rem;
+  }
+  .process-step p { font-size: 0.78rem; color: var(--grey); line-height: 1.65; margin: 0; }
+  @media (max-width:580px) {
+    .process-grid { grid-template-columns: 1fr; }
+    .process-step { border-right: none; border-bottom: 1px solid var(--dim); }
+    .process-step:last-child { border-bottom: none; }
+  }
+
+  /* ACCORDION */
+  .accordion-item { border-bottom: 1px solid var(--dim); }
+  .accordion-item:first-child { border-top: 1px solid var(--dim); margin-top: 2.5rem; }
+  .accordion-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0;
+    cursor: pointer;
+    user-select: none;
+    gap: 1rem;
+  }
+  .acc-title {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    transition: color 0.2s;
+  }
+  .acc-title .prompt { color: var(--red); }
+  .accordion-trigger:hover .acc-title { color: var(--cyan); }
+  .acc-icon {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--red);
+    transition: transform 0.3s, color 0.3s;
+    flex-shrink: 0;
+  }
+  .accordion-item.open .acc-icon { transform: rotate(45deg); color: var(--cyan); }
+  .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .accordion-item.open .accordion-body { max-height: 500px; }
+  .accordion-body-inner {
+    padding: 0.5rem 0 2rem 1.5rem;
+    border-left: 1px solid var(--dim);
+    margin-left: 0.3rem;
+  }
+  .accordion-body-inner p { font-size: 0.87rem; }
+
+  /* POSTS GRID */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--dim);
+    border: 1px solid var(--dim);
+    margin-top: 3rem;
+  }
+  @media (max-width:580px) { .posts-grid { grid-template-columns: 1fr; } }
+
+  .post-card {
+    background: var(--bg);
+    padding: 2rem 1.8rem;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .post-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, var(--red), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .post-card:hover { background: var(--bg2); }
+  .post-card:hover::before { transform: scaleX(1); }
+  .post-card.featured {
+    outline: 1px solid var(--red);
+    box-shadow: 0 0 40px rgba(255,58,45,0.07), inset 0 0 40px rgba(255,58,45,0.03);
+  }
+  .post-card.featured::before { transform: scaleX(1); }
+
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .post-card h4 {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 0.9rem;
+  }
+  .post-card p { font-size: 0.81rem; color: var(--grey); line-height: 1.8; }
+  .post-tags { margin-top: 1.4rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    border: 1px solid var(--dim);
+    padding: 0.15rem 0.5rem;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .post-card:hover .tag { color: rgba(138,138,154,0.6); border-color: rgba(138,138,154,0.25); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    margin-top: 1.5rem;
+    margin-right: 0.7rem;
+    cursor: pointer;
+    background: transparent;
+  }
+  .btn-red   { color: var(--red);  border-color: var(--red); }
+  .btn-red:hover  { background: var(--red);  color: var(--bg); box-shadow: 0 0 20px var(--red-glow); }
+  .btn-cyan  { color: var(--cyan); border-color: var(--cyan); }
+  .btn-cyan:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 0 20px var(--cyan-glow); }
+
+  /* CREDITS */
+  .credits-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+  .credits-table tr { border-bottom: 1px solid var(--dim); }
+  .credits-table tr:last-child { border-bottom: none; }
+  .credits-table td { padding: 0.85rem 0; vertical-align: top; font-size: 0.85rem; }
+  .credits-table td:first-child {
+    font-family: var(--font-mono);
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey);
+    width: 35%;
+    padding-right: 1.5rem;
+    padding-top: 1.1rem;
+  }
+  .credits-table a { color: var(--cyan); text-decoration: none; transition: color 0.2s; }
+  .credits-table a:hover { color: var(--white); }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: var(--bg2);
+    border: 1px solid var(--dim);
+    padding: 2.5rem;
+    margin-top: 3.5rem;
+    position: relative;
+  }
+  .disclaimer::before {
+    content: '> LEGAL_NOTICE.txt —';
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    color: var(--red);
+    margin-bottom: 1.2rem;
+  }
+  .disclaimer p { font-size: 0.78rem; color: var(--grey); }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 2;
+    border-top: 1px solid var(--dim);
+    padding: 2.5rem 0;
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--white);
+  }
+  .footer-logo .dot { color: var(--red); }
+  .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .footer-links a {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--grey);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--cyan); }
+  .footer-end {
+    font-family: var(--font-mono);
+    font-size: 0.54rem;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0; }
+  }
+  @keyframes ecgDraw {
+    from { stroke-dashoffset: 1200; }
+    to   { stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div id="progress"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-logo" href="https://sinaida.eu" target="_blank">
+    <svg viewBox="0 0 120 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="0,14 12,14 18,3 24,25 30,8 36,20 42,14 60,14" stroke="#ff3a2d" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="65,14 80,14 86,6 92,22 96,14 120,14" stroke="#00d4d4" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    SIN.AI.DA
+  </a>
+  <span class="nav-tag">eschaton_sequence.proj</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <p class="hero-meta">Sinaida Krivchenko &nbsp;|&nbsp; Visual Artist &amp; Digital Strategist</p>
+    <h1>
+      <span class="w">The</span>
+      <span class="r">Eschaton</span>
+      <span class="c">Sequence<span class="cursor"></span></span>
+    </h1>
+    <p class="hero-sub">A multimedia interpretation of David Foster Wallace's Infinite Jest — marking 30 years of a book that predicted the timeline we live in. Generative AI · TouchDesigner · DaVinci Resolve.</p>
+    <div class="hero-pills">
+      <span class="pill">Generative AI</span>
+      <span class="pill">TouchDesigner</span>
+      <span class="pill">Concept Art</span>
+      <span class="pill">DaVinci Resolve</span>
+      <span class="pill">Python</span>
+      <span class="pill">Midjourney</span>
+    </div>
+    <p class="scroll-hint">SCROLL TO EXPLORE</p>
+  </div>
+</section>
+
+<!-- CONCEPT -->
+<section>
+  <div class="wrap">
+    <p class="term">eschaton_concept.decode() <span class="muted">—</span></p>
+    <div class="two-col">
+      <div>
+        <h2>Surreal tech<br>for a <em>surreal</em> book</h2>
+        <svg class="ecg-svg" viewBox="0 0 900 36">
+          <polyline class="ecg-path" points="0,18 80,18 100,4 116,32 132,14 148,24 164,18 280,18 300,4 316,32 332,18 460,18 480,4 496,32 512,14 528,24 544,18 660,18 680,4 696,32 712,18 900,18" stroke="#ff3a2d" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="reveal">
+        <p>I find AI an absolutely perfect medium to portray a scene from a book that itself is about addictions, including those to technology. <em>The Entertainment</em> was made with surreal optical tech, just like AI.</p>
+        <p>But using AI solely to make an interpretation of such a literary masterpiece was not enough — I wanted the exact precision and the deliberate infuriation with tools.</p>
+        <p>Back in the days I used Python for processing images for cervical cancer screening — the same analytical rigour, now using Python in TouchDesigner with Claude AI vibe coding for coordinate tracking.</p>
+        <div class="pull-quote">AI is not a shortcut. For me, it is a creative language.</div>
+      </div>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat">
+        <span class="stat-num">30</span>
+        <span class="stat-label">Years of Infinite Jest</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">3</span>
+        <span class="stat-label">AI Platforms</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">✓</span>
+        <span class="stat-label">Higgsfield Creators Gallery</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section>
+  <div class="wrap">
+    <p class="term reveal">pipeline.execute() <span class="muted">— deliberate friction between dream and data</span></p>
+    <h2 class="reveal">The <span class="c">pipeline</span></h2>
+    <p class="reveal" style="max-width:560px; color:var(--grey); margin-top:0.5rem;">From fluid generative outputs to rigid mathematical tracking — mirroring the book's tension between chaos and control.</p>
+
+    <div class="process-grid reveal">
+      <div class="process-step">
+        <span class="step-num">01 / RESEARCH</span>
+        <h4>Miro lore mapping</h4>
+        <p>Uniform colors, event sequences, book-accurate details — including the Mean-Value Theorem defining ball trajectories. Yushityu brand monitors from the book.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">02 / IDEATION</span>
+        <h4>Higgsfield AI</h4>
+        <p>Mixed media initial exploration, then pivoted toward paranoid precision matching the scene's computer-tracking aesthetic.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">03 / GENERATION</span>
+        <h4>Midjourney × Artlist</h4>
+        <p>Dream-state visual language of the Enfield Tennis Academy — uniforms, dystopian details, Easter eggs for readers of the book.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">04 / TRACKING</span>
+        <h4>Python + TouchDesigner</h4>
+        <p>Object coordinates concatenated with Combatant ID. Feedback loops updated to POPs. Mathematical tracking of nuclear warhead tennis balls.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-num">05 / POST</span>
+        <h4>DaVinci Resolve</h4>
+        <p>Color space: nostalgic yet sterile. Audio manually stripped and reconstructed. Score: Gaudeamus Igitur — formal, haunting backbone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section>
+  <div class="wrap">
+    <p class="term reveal">story_log.read() <span class="muted">—</span></p>
+    <h2 class="reveal">Behind the <em>work</em></h2>
+
+    <div class="reveal">
+      <div class="accordion-item">
+        <div class="accordion-trigger" onclick="toggleAcc(this)">
+          <span class="acc-title"><span class="prompt">&gt; </span>How Infinite Jest found me during lockdown</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>2020 was a torturous year. While rewatching <em>Only Lovers Left Alive</em> by Jim Jarmusch, I became curious about which books Eve, Tilda Swinton's character, was packing for her trip. Most I had read and enjoyed — and then there was <em>Infinite Jest</em> by David Foster Wallace. That seemed like a fun reading challenge for lockdown time. It took me several weeks to go through that absolutely mind-bending body of work. Yet, this book has never completely left my mind.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-trigger" onclick="toggleAcc(this)">
+          <span class="acc-title"><span class="prompt">&gt; </span>The course that killed itself — and the freedom that followed</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>In January 2026 I enrolled in an online course that became a bleak disappointment. The second week's task: make a creative video about sports. Of course, the Eschaton scene was the first thing that came to mind. The group supervisor said "I beg you, have mercy on me" — asking for something more realistic. A few days later I withdrew. I had freedom to finish the video on my own terms, without comments killing the main idea.</p>
+            <p>Realism is easy. Capturing the specific, frantic, drug-addled genius-level anxiety of David Foster Wallace's world is an entirely different task.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-trigger" onclick="toggleAcc(this)">
+          <span class="acc-title"><span class="prompt">&gt; </span>Sound design — where the soul lives</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>Many generated clips came with their own audio — most felt wrong, uncanny in ways that didn't serve the story. I manually stripped and deconstructed the audio, harvesting specific textures and layering them. The final edit is set to <em>Gaudeamus Igitur</em> — a nod to the academic rigidity of the Enfield Tennis Academy, sourced through the Instagram library to balance the tribute with digital rights.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <div class="accordion-trigger" onclick="toggleAcc(this)">
+          <span class="acc-title"><span class="prompt">&gt; </span>#InfiniteJest turns 30 — is the timeline right?</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <p>The Eschaton scene — a geopolitical wargame played by tennis students that dissolves into chaos — feels haunting against 2026's backdrop. Life is so absurd that taking anything seriously is fundamentally ridiculous, even if it is also perhaps necessary to survive — just like making a good enough video via Gen AI. My soul is in the deep dive.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POSTS -->
+<section>
+  <div class="wrap">
+    <p class="term reveal">instagram_context.load() <span class="muted">—</span></p>
+    <h2 class="reveal">The <span class="c">conversation</span> around the work</h2>
+
+    <div class="posts-grid reveal">
+      <div class="post-card">
+        <p class="post-date">February 4, 2026</p>
+        <h4>On AI, addiction, and taking absurdity seriously</h4>
+        <p>Using AI solely to make an interpretation of such a literary masterpiece was not enough — I wanted the exact precision and the deliberate infuriation with tools. The paranoid precision of the scene: computer tracking of tennis balls representing nuclear warheads.</p>
+        <div class="post-tags">
+          <span class="tag">#infinitejest</span><span class="tag">#conceptart</span><span class="tag">#eschaton</span><span class="tag">#davidfosterwallace</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <p class="post-date">January 19, 2026</p>
+        <h4>How much can we outsource to the silicon brains?</h4>
+        <p>The vast majority of species leave their legacy by reproducing. Then we decided that mechanical utility is not enough — we want aesthetics, seeking a legacy beyond biology. AI is yet another tool, but with tectonic shift: how can we tell where the human idea ends?</p>
+        <div class="post-tags">
+          <span class="tag">#escapism</span><span class="tag">#genai</span><span class="tag">#digitalsanctuary</span><span class="tag">#healthjourney</span>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <p class="post-date">January 11, 2026</p>
+        <h4>Is digital "slop" a cause of crisis — or a cure?</h4>
+        <p>We tend to blame social media for the decline of collective mental health. But what if we have the causation backward? Can repetitive digital consumption be a low-effort self-regulation strategy for those already experiencing anxiety?</p>
+        <div class="post-tags">
+          <span class="tag">#aislop</span><span class="tag">#glitchcore</span><span class="tag">#noir</span><span class="tag">#cyberpunk</span><span class="tag">#dreamcore</span>
+        </div>
+      </div>
+
+      <div class="post-card featured">
+        <p class="post-date" style="color:var(--red);">▶ &nbsp;Watch the final video</p>
+        <h4>The Eschaton Sequence — accepted to Higgsfield Creators Gallery</h4>
+        <p>In a landscape of disposable content, this is a statement: stay in the infuriating details, the mathematical theorems, and the tactile memories of a physical book.</p>
+        <a class="btn btn-red" href="https://www.instagram.com/p/DUUMakuArpD/" target="_blank">Watch on Instagram ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDITS -->
+<section>
+  <div class="wrap">
+    <p class="term reveal">credits.list() <span class="muted">—</span></p>
+    <div class="two-col">
+      <div class="reveal">
+        <h2>Full <em>pipeline</em></h2>
+        <table class="credits-table">
+          <tr><td>Visual Synthesis</td><td>Midjourney · Higgsfield AI · Artlist</td></tr>
+          <tr><td>Tracking Effects</td><td>TouchDesigner (Python, POPs)</td></tr>
+          <tr><td>Vibe Coding</td><td>Claude AI — Anthropic</td></tr>
+          <tr><td>TD Tutorials</td><td>@dcheesman</td></tr>
+          <tr><td>Video Editing</td><td>DaVinci Resolve</td></tr>
+          <tr><td>Sound Design</td><td>DaVinci Resolve + manual reconstruction</td></tr>
+          <tr><td>Color Grading</td><td>DaVinci Resolve Color</td></tr>
+          <tr><td>Concept &amp; Visuals</td><td>Sinaida Krivchenko (@sin.ai.da)</td></tr>
+        </table>
+      </div>
+
+      <div class="reveal">
+        <h2><span class="c">Find</span> the work</h2>
+        <table class="credits-table">
+          <tr><td>Instagram</td><td><a href="https://www.instagram.com/sin.ai.da/" target="_blank">@sin.ai.da</a></td></tr>
+          <tr><td>Behance</td><td><a href="https://www.behance.net/sinaida" target="_blank">behance.net/sinaida</a></td></tr>
+          <tr><td>Website</td><td><a href="https://sinaida.eu" target="_blank">sinaida.eu</a></td></tr>
+          <tr><td>LinkedIn</td><td><a href="https://www.linkedin.com/in/sinaida/" target="_blank">linkedin.com/in/sinaida</a></td></tr>
+        </table>
+        <div>
+          <a class="btn btn-red" href="https://www.instagram.com/sin.ai.da/" target="_blank">Follow on Instagram ↗</a>
+          <a class="btn btn-cyan" href="https://www.behance.net/sinaida" target="_blank">View on Behance ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="disclaimer reveal">
+      <p>This video is a non-commercial, transformative fan artwork created for purposes of tribute to the literary work 'Infinite Jest' by David Foster Wallace. This production is independent of the author's estate or publishers.</p>
+      <p>Intellectual Property Notice: All rights to the underlying concepts, including Subsidized Time and the Organization of North American Nations (ONAN), are reserved to their rightful owners — David Foster Wallace Estate and Hachette Book Group (Little, Brown and Co.).</p>
+      <p>Visuals and E.T.A. design concepts by @sin.ai.da</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-logo">SIN<span class="dot">.</span>AI<span class="dot">.</span>DA &nbsp;·&nbsp; The Eschaton Sequence &nbsp;·&nbsp; 2026</span>
+      <div class="footer-links">
+        <a href="https://www.instagram.com/sin.ai.da/" target="_blank">Instagram</a>
+        <a href="https://www.behance.net/sinaida" target="_blank">Behance</a>
+        <a href="https://sinaida.eu" target="_blank">sinaida.eu</a>
+      </div>
+      <p class="footer-end">&gt; channel remains open. awaiting response<span class="cursor" style="width:6px;height:0.85em;"></span></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// PARTICLES — red dots like sinaida.eu
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, dots = [];
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initDots() {
+  dots = [];
+  const n = Math.floor((W * H) / 16000);
+  for (let i = 0; i < n; i++) {
+    dots.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.6 + 0.3,
+      base: Math.random() * 0.5 + 0.1,
+      tw: Math.random() * Math.PI * 2,
+      tws: Math.random() * 0.018 + 0.004,
+      vx: (Math.random() - 0.5) * 0.12,
+      vy: (Math.random() - 0.5) * 0.12,
+      red: Math.random() > 0.65
+    });
+  }
+}
+
+function drawDots(ts) {
+  ctx.clearRect(0, 0, W, H);
+  dots.forEach(d => {
+    d.tw += d.tws;
+    d.x += d.vx; if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+    d.y += d.vy; if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+    const a = d.base * (0.5 + 0.5 * Math.sin(d.tw));
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = d.red ? `rgba(255,58,45,${a})` : `rgba(200,200,220,${a * 0.35})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(drawDots);
+}
+
+resize(); initDots(); drawDots();
+window.addEventListener('resize', () => { resize(); initDots(); });
+
+// PROGRESS BAR
+window.addEventListener('scroll', () => {
+  const d = document.documentElement;
+  document.getElementById('progress').style.width =
+    (window.scrollY / (d.scrollHeight - d.clientHeight) * 100) + '%';
+});
+
+// SCROLL REVEAL
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ACCORDION
+function toggleAcc(trigger) {
+  const item = trigger.closest('.accordion-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.accordion-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>
