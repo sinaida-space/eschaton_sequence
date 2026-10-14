@@ -2,8 +2,6 @@
 
 **A multimedia interpretation of David Foster Wallace's *Infinite Jest* — marking 30 years of a book that predicted the timeline we live in.**
 
-> Production mirror. Development and issue tracking run in a private development environment; releases are published here.
-
 → **[Live site](https://sinaida-space.github.io/eschaton_sequence/)**  
 → **[Behance project](https://www.behance.net/gallery/244113481/A-Multimedia-Interpretation-of-Infinite-Jest)**  
 → **[Instagram](https://www.instagram.com/p/DUUMakuArpD/)**
